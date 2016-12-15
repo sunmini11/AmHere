@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "588524018440",
+    "firebase_url": "https://student-safety-app.firebaseio.com",
+    "project_id": "student-safety-app",
+    "storage_bucket": "student-safety-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:588524018440:android:3822d88d018f2193",
+        "android_client_info": {
+          "package_name": "com.egco428.logintest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "588524018440-2vmmri1eccamrfctaqpga0blsc4k29jv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAZLYSPGayazG0nxPLU9yFtAsi7zFVdzAo"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
