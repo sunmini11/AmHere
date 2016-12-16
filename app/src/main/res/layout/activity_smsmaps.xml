@@ -13,7 +13,7 @@
     android:id="@+id/map"
     android:name="com.google.android.gms.maps.SupportMapFragment"
     android:layout_width="match_parent"
-    android:layout_height="450dp"
+    android:layout_height="500dp"
     tools:context="com.egco428.logintest.SMSMapsActivity"
     android:layout_alignParentTop="true"
     android:layout_alignParentStart="true" />
@@ -21,11 +21,14 @@
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="sendSMS"
+        android:text="send SMS"
         android:id="@+id/sendSMS"
         android:layout_below="@+id/map"
         android:layout_alignParentEnd="true"
-        android:onClick="sendSMS" />
+        android:onClick="sendSMS"
+        android:background="#6f65f3"
+        android:textColor="#ffffff"
+        android:textSize="30dp" />
 
 
 </RelativeLayout>

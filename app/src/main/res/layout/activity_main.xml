@@ -13,63 +13,94 @@
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="USERNAME"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:id="@+id/textView" />
+        android:id="@+id/textView"
+        android:layout_above="@+id/usernameMain"
+        android:layout_alignParentStart="true" />
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/usernameMain"
-        android:layout_below="@+id/textView"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp" />
+        android:background="@drawable/border"
+        android:layout_above="@+id/textView2"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="PASSWORD"
         android:id="@+id/textView2"
-        android:layout_below="@+id/usernameMain"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="10dp"
-        android:gravity="center" />
+        android:gravity="center"
+        android:layout_above="@+id/passwordMain"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="10dp" />
 
     <EditText
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:id="@+id/passwordMain"
-        android:layout_below="@+id/textView2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="5dp" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="sign in"
-        android:id="@+id/signin"
-        android:layout_below="@+id/passwordMain"
+        android:inputType="textPassword"
+        android:background="@drawable/border"
+        android:layout_above="@+id/linearLayout"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="89dp"
-        android:onClick="clickSignin" />
+        android:layout_marginBottom="60dp" />
 
-    <Button
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="sign up"
-        android:id="@+id/signup"
-        android:layout_alignTop="@+id/signin"
-        android:layout_alignParentEnd="true"
-        android:onClick="clickSignup" />
+        android:layout_above="@+id/login_btn"
+        android:layout_alignParentStart="true"
+        android:layout_alignEnd="@+id/passwordMain"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="sign in"
+            android:id="@+id/signin"
+            android:layout_alignParentStart="true"
+            android:onClick="clickSignin"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#fb7878"
+            android:textSize="20dp"
+            android:textColor="#ffffff" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:text="sign up"
+            android:id="@+id/signup"
+            android:layout_alignParentEnd="true"
+            android:onClick="clickSignup"
+            android:layout_weight="1"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:background="#fb7878"
+            android:textSize="20dp"
+            android:textColor="#ffffff" />
+    </LinearLayout>
 
     <com.facebook.login.widget.LoginButton
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="50dp"
         android:text="Login with facebook"
         android:id="@+id/login_btn"
-        android:layout_below="@+id/signup"
-        android:layout_toStartOf="@+id/signup"
-        android:layout_marginTop="60dp" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@+id/linearLayout"
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="30dp" />
+
+    <ImageView
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:id="@+id/imageView2"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="30dp"
+        android:src="@drawable/map" />
 
 </RelativeLayout>

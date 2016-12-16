@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -32,6 +34,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -85,20 +88,15 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         setContentView(R.layout.activity_smsmaps);
         Username = getIntent().getStringExtra(MainActivity.User);
 
-//        Lati = getIntent().getDoubleExtra(MainActivity.La,0);
-//        Long = getIntent().getDoubleExtra(MainActivity.Lo,0);
-
-//        dataSource = new ContDataSource(this);
-//        dataSource.open();
-//        //values = dataSource.getAllComments(User);
-//        Cursor allNumber = dataSource.findnumber(User);
-
-        //loginArrayAdapter = new loginArrayAdapter(this,0,values);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
+        mActionBar.setTitle("Map");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
@@ -113,9 +111,9 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             }
 
             Location location = locationManager.getLastKnownLocation(mprovider);
-            locationManager.requestLocationUpdates(mprovider, 1000, 1, this);
-            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,0,0,this);
-            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER,0,0,this);
+            //locationManager.requestLocationUpdates(mprovider, 1000, 1, this);
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,0,1,this);
+            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER,0,1,this);
 //            Lati = location.getLatitude();
 //            Long = location.getLongitude();
             if (location != null && onmap){
@@ -144,7 +142,7 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
 
         LatLng sydney = new LatLng(Lati, Long);
         mMap.addMarker(new MarkerOptions().position(sydney).title("You are here"));
-       // mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,20));
 
         //get data
@@ -167,7 +165,11 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
                 double lo = lon.get(i);
                 double dis = distance(Lati,Long,la,lo);
                 if(dis<0.5){
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(la,lo)).title(UN));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(la, lo))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                            .title(UN)
+                            .snippet(String.valueOf(la)+","+String.valueOf(lo)));
                 }
             }
         }
@@ -313,14 +315,18 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
     public void sendSMS(View view) {
         dataSource = new ContDataSource(this);
         dataSource.open();
-        //values = dataSource.getAllComments(User);
+        values = dataSource.getAllComments(User);
         Cursor allNumber = dataSource.findnumber(Username);
         allNumber.moveToFirst();
 
+        int i = 0;
         while (!allNumber.isAfterLast()) {
             String phoneNo = allNumber.getString(2);
             String msg = "I'm here" + " " + "Latituge: " + Lati + "  " + "Longitude: " + Long;
             try {
+                i=i+1;
+
+                System.out.println("count"+i);
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneNo, null, msg, null, null);
                 Toast.makeText(getApplicationContext(), "Message Sent",
@@ -330,6 +336,7 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
                         Toast.LENGTH_LONG).show();
                 ex.printStackTrace();
             }
+            allNumber.moveToNext();
         }
     }
 

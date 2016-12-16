@@ -5,9 +5,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -48,8 +52,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-
+        ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
+        mActionBar.setTitle("Log In");
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(this);
 
@@ -101,10 +106,12 @@ public class MainActivity extends AppCompatActivity {
 
         if(loggedIn && (profile!=null)){
             username.setText(profile.getName());
+            password.setText("0000000000");
             un = profile.getName();
 
         }else {
             username.setText(null);
+            password.setText(null);
         }
     }
 
@@ -119,6 +126,12 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume(){
         super.onResume();
         updateUI();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+
     }
 
     @Override
@@ -143,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
         String loginMessage = dataSource.findpass(name);
 
         String passw = password.getText().toString();
+        System.out.println("printname" +name+passw+loginMessage);
 
         if (loginMessage.equals("")) {
 
@@ -167,6 +181,14 @@ public class MainActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show();
             }
         }
+    }
+
+
+    @Override
+    public void onBackPressed() {
+
+        android.os.Process.killProcess(android.os.Process.myPid());
+        // This above line close correctly
     }
 
 }

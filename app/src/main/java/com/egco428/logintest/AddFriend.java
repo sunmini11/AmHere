@@ -3,9 +3,13 @@ package com.egco428.logintest;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -40,6 +44,12 @@ public class AddFriend extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
 
+        ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
+        mActionBar.setTitle("Add Friends");
+
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
+
         name = (EditText)findViewById(R.id.name);
         number = (EditText)findViewById(R.id.number);
         add = (Button)findViewById(R.id.addBtn);
@@ -72,6 +82,18 @@ public class AddFriend extends AppCompatActivity {
         });
 
         loginArrayAdapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
 

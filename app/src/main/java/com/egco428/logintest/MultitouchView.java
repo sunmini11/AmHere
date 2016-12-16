@@ -20,9 +20,8 @@ public class MultitouchView extends View {
 
     private SparseArray<PointF> mActivePointers;
     private Paint mPaint;
-    private int[] colors = { Color.BLUE, Color.GREEN, Color.MAGENTA,
-            Color.BLACK, Color.CYAN, Color.GRAY, Color.RED, Color.DKGRAY,
-            Color.LTGRAY, Color.YELLOW };
+    private int[] colors = { Color.parseColor("#7986CB"), Color.parseColor("#64B5F6"), Color.parseColor("#4FC3F7"),
+             };
 
     private Paint textPaint;
 
@@ -47,7 +46,7 @@ public class MultitouchView extends View {
         for (int size = mActivePointers.size(), i=0; i<size; i++){
             PointF point = mActivePointers.valueAt(i);
             if (point != null){
-                mPaint.setColor(colors[i%9]);
+                mPaint.setColor(colors[i%3]);
                 canvas.drawCircle(point.x,point.y,SIZE,mPaint);
             }
             canvas.drawText("Total pointers: " + mActivePointers.size(),10,40,textPaint);

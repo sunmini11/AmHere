@@ -5,6 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationListener;
@@ -15,6 +17,7 @@ import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.os.Bundle;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -36,6 +39,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.firebase.database.ChildEventListener;
@@ -91,6 +95,10 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
+
+        ActionBar mActionBar = getSupportActionBar();
+        mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
+        mActionBar.setTitle("Map");
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
@@ -172,7 +180,11 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
                 double lo = lon.get(i);
                 double dis = distance(Lati, Long, la, lo);
                 if(dis<0.5){
-                    mMap.addMarker(new MarkerOptions().position(new LatLng(la, lo)).title(UN));
+                    mMap.addMarker(new MarkerOptions()
+                            .position(new LatLng(la, lo))
+                            .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
+                            .title(UN)
+                            .snippet(String.valueOf(la)+","+String.valueOf(lo)));
                 }
             }
         }
@@ -319,9 +331,8 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         @Override
         public void onSuccess(Sharer.Result result) {
             if (result.getPostId() != null) {
-                String title = "Post Successful";
-                String id = result.getPostId();
-                String msg = String.format("Post ID: %s", id);
+                String title = "Facebook";
+                String msg = String.format("Post Successful");
                 showResult(title, msg);
             }
         }
