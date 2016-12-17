@@ -169,7 +169,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
 
     /*
     Add the other users's location on map and marker
-    Distance from user to them have to less than 0.5 miles
+    Distance from user to them have to less than 500 meters
     */
     public void markFriend() {
         for (int i = 0; i < lat.size(); i++) {
