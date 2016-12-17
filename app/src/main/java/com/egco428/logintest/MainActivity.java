@@ -52,20 +52,25 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        //Actionbar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("Log In");
-        FacebookSdk.sdkInitialize(getApplicationContext());
+
+        FacebookSdk.sdkInitialize(getApplicationContext()); //initialize Facebook SDK
         AppEventsLogger.activateApp(this);
 
-        callbackManager = CallbackManager.Factory.create();
+        callbackManager = CallbackManager.Factory.create(); //create CallbackManager
 
         LoginManager.getInstance().registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
+
+            //if login on Facebook success
             @Override
             public void onSuccess(LoginResult loginResult) {
                 updateUI();
-                Intent intent = new Intent(MainActivity.this,FacebookMapsActivity.class);
-                intent.putExtra(User,un);
+                Intent intent = new Intent(MainActivity.this, FacebookMapsActivity.class);
+                intent.putExtra(User, un);
                 startActivity(intent);
             }
 
@@ -81,15 +86,16 @@ public class MainActivity extends AppCompatActivity {
         });
 
         setContentView(R.layout.activity_main);
-        username = (EditText)findViewById(R.id.usernameMain);
-        password = (EditText)findViewById(R.id.passwordMain);
+        username = (EditText) findViewById(R.id.usernameMain);
+        password = (EditText) findViewById(R.id.passwordMain);
 
-        signIn = (Button)findViewById(R.id.signin);
-        signUp = (Button)findViewById(R.id.signup);
+        signIn = (Button) findViewById(R.id.signin);
+        signUp = (Button) findViewById(R.id.signup);
 
         dataSource = new LoginDataSource(this);
         dataSource.open();
 
+        //create profileTracker
         profileTracker = new ProfileTracker() {
             @Override
             protected void onCurrentProfileChanged(Profile oldProfile, Profile currentProfile) {
@@ -99,31 +105,33 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void updateUI(){
+    //check user login status
+    private void updateUI() {
         boolean loggedIn = AccessToken.getCurrentAccessToken() != null;
         Profile profile = Profile.getCurrentProfile();
 
-
-        if(loggedIn && (profile!=null)){
+        //login success
+        if (loggedIn && (profile != null)) {
             username.setText(profile.getName());
             password.setText("0000000000");
             un = profile.getName();
 
-        }else {
+        }
+        else {
             username.setText(null);
             password.setText(null);
         }
     }
 
     @Override
-    protected void onDestroy(){
+    protected void onDestroy() {
         super.onDestroy();
         profileTracker.stopTracking(); //stop track profile
         LoginManager.getInstance().logOut();
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         super.onResume();
         updateUI();
     }
@@ -134,49 +142,47 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    //receive login result back
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data){
-        super.onActivityResult(requestCode,resultCode,data);
-        callbackManager.onActivityResult(requestCode,resultCode,data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data); //send result to callbackManager
     }
 
-    public void clickSignup(View view){
-
+    //push signup button then show signup page
+    public void clickSignup(View view) {
         startActivity(new Intent(MainActivity.this, signUp.class));
     }
 
-    public void clickSignin(View view){
+    //push signin button then check user's password
+    public void clickSignin(View view) {
         checkPassword();
     }
 
-
-    private void checkPassword(){
-
+    //check matching username and password in database
+    private void checkPassword() {
         String name = username.getText().toString();
         String loginMessage = dataSource.findpass(name);
 
         String passw = password.getText().toString();
-        System.out.println("printname" +name+passw+loginMessage);
+        System.out.println("printname" + name + passw + loginMessage);
 
         if (loginMessage.equals("")) {
 
             Toast.makeText(getApplicationContext(), "Login fail",
                     Toast.LENGTH_SHORT).show();
 
-        }
-
-        else {
+        } else {
             if (loginMessage.equals(passw)) {
                 Toast.makeText(getApplicationContext(), "Login success",
                         Toast.LENGTH_SHORT).show();
 
-                Intent intent = new Intent(this,SMSMapsActivity.class);
-                intent.putExtra(User,name);
+                Intent intent = new Intent(this, SMSMapsActivity.class);
+                intent.putExtra(User, name);
 
-                startActivityForResult(intent,DETAIL_REQ_CODE);
+                startActivityForResult(intent, DETAIL_REQ_CODE);
                 //startActivity(new Intent(MainActivity.this, AddFriend.class));
-            }
-            else {
+            } else {
                 Toast.makeText(getApplicationContext(), "Login fail",
                         Toast.LENGTH_SHORT).show();
             }
@@ -184,6 +190,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    //press back button on user's device
     @Override
     public void onBackPressed() {
 

@@ -17,7 +17,7 @@ public class Startpage extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_startpage);
-
+        //ActionBar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("AmHere");
@@ -25,16 +25,16 @@ public class Startpage extends AppCompatActivity {
         startMainPage();
     }
 
+    //check if touch more than 2 point then start Login page
     public void startMainPage() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(m.pointerSize >= 2){
-                    if (check==false){
+                if (m.pointerSize >= 2) {
+                    if (check == false) {
                         handler.removeCallbacksAndMessages(null);
-                    }
-                    else {
+                    } else {
                         Intent intent = new Intent(Startpage.this, MainActivity.class);
                         startActivity(intent);
                         check = false;
@@ -43,7 +43,6 @@ public class Startpage extends AppCompatActivity {
                 handler.postDelayed(this, 1000);
             }
         }, 1000);
-
 
     }
 }

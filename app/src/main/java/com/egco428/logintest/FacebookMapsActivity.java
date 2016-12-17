@@ -89,30 +89,28 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_facebook_maps);
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-
-        turnGPSOn();
-
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //Actionbar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("Map");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
+        //Receive username from MainActivity
         getUsername = getIntent().getStringExtra(MainActivity.User);
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+
 
         //Firebase
         datalist = new ArrayList();
         database = FirebaseDatabase.getInstance();
         myRef = database.getReference(Config.DATABASE_REF);
 
-//        retrieveUserPass();
+        //GPS
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-
         mprovider = locationManager.getBestProvider(criteria, true);
 
         if (mprovider != null && !mprovider.equals("")) {
@@ -121,22 +119,18 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
             }
 
             Location location = locationManager.getLastKnownLocation(mprovider);
-            //locationManager.requestLocationUpdates(mprovider, 1000, 1, this);
             locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 5000, 0, this);
             locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 5000, 0, this);
-            //retrieveUserPass();
 
-//            Lati = location.getLatitude();
-//            Long = location.getLongitude();
             if (location != null && onmap) {
                 onLocationChanged(location);
             } else {
             }
-            //Toast.makeText(getBaseContext(), "No Location Provider Found Check Your Code", Toast.LENGTH_SHORT).show();
 
             scheduleSendLocation();
         }
 
+        //Push button to post location on Facebook
         shareLocation = (Button) findViewById(R.id.postBtn);
         shareLocation.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -149,18 +143,20 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
 
     }
 
+    //Add latitude, longitude and username when location change
     @Override
     public void onLocationChanged(Location location) {
 
         mMap.clear();
 
+        //get current latitude and longitude
         Lati = location.getLatitude();
         Long = location.getLongitude();
 
+        //set user's location on Map
         LatLng sydney = new LatLng(Lati, Long);
         mMap.addMarker(new MarkerOptions().position(sydney).title("You are here"));
          mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,20));
 
         //get data
         double getLat = Lati;
@@ -171,6 +167,10 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         onmap = true;
     }
 
+    /*
+    Add the other users's location on map and marker
+    Distance from user to them have to less than 0.5 miles
+    */
     public void markFriend() {
         for (int i = 0; i < lat.size(); i++) {
             String UN = user.get(i).toString();
@@ -190,19 +190,20 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    //Read data from Firebase every 1 second
     public void scheduleSendLocation() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
                 UserData();
-                markFriend();// this method will contain your almost-finished HTTP calls
+                markFriend();
                 handler.postDelayed(this, Delay_SECONDS);
             }
         }, Delay_SECONDS);
     }
 
-
+    //Calculate distance between user and the others
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1))
@@ -262,22 +263,25 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
 
     private static final String PERMISSION = "publish_actions";
 
+    //Kind of posting which waiting for processing
     private enum PendingAction {
         NONE,
         POST_LOCATION
     }
 
+    //posting will process after get publish_action permission
     private PendingAction pendingAction = PendingAction.NONE;
 
+    //Post method to check login status
     private void performPublish(PendingAction action) {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
-
         if (accessToken != null) {
-            pendingAction = action;
+            pendingAction = action; //recognise the action
             handlePendingAction();
         }
     }
 
+    //post location link on Facebook
     private void handlePendingAction() {
         PendingAction oldPendingAction = pendingAction;
         pendingAction = PendingAction.NONE;
@@ -291,10 +295,11 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         }
     }
 
+    //Pst location on Facebook
     public void PostLocation() {
         Profile profile = Profile.getCurrentProfile();
 
-        //Location
+        //link's information
         ShareLinkContent content = new ShareLinkContent.Builder()
                 .setContentTitle("I'm here at Latitude:" + Lati + " Longitude:" + Long)
                 .setContentDescription("My current Location")
@@ -307,7 +312,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
             ShareApi.share(content, shareCallback);
         } else {
             pendingAction = PendingAction.POST_LOCATION;
-            LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList(PERMISSION));
+            LoginManager.getInstance().logInWithPublishPermissions(this, Arrays.asList(PERMISSION)); //request permission from user
         }
     }
 
@@ -316,11 +321,13 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         return accessToken != null && accessToken.getPermissions().contains("publish_actions");
     }
 
+    //to be a callback of the post
     private FacebookCallback<Sharer.Result> shareCallback = new FacebookCallback<Sharer.Result>() {
         @Override
         public void onCancel() {
         }
 
+        //when post failed
         @Override
         public void onError(FacebookException error) {
             String title = "Post Failed";
@@ -328,6 +335,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
             showResult(title, msg);
         }
 
+        //when post successful
         @Override
         public void onSuccess(Sharer.Result result) {
             if (result.getPostId() != null) {
@@ -346,21 +354,20 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         }
     };
 
+    //when press back on your device
     public void onDestroy() {
         if (myRef.child(getUsername) != null) {
-            myRef.child(getUsername).removeValue();
-            LoginManager.getInstance().logOut();
+            myRef.child(getUsername).removeValue(); //remove data from Firebase
+            LoginManager.getInstance().logOut(); //log out from facebook
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             }
             locationManager.removeUpdates(this);
-//            sendBroadcast(intent);
         }
         super.onDestroy();
-
-
     }
 
+    //when push back button on interface
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -376,11 +383,8 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         return super.onOptionsItemSelected(item);
     }
 
-
-
-
-    private void collectPhoneNumbers(Map<String,Object> users) {
-
+    //Get latitude, longitude and user's name
+    private void GetUserData(Map<String,Object> users) {
         //iterate through each user, ignoring their UID
         for (Map.Entry<String, Object> entry : users.entrySet()){
 
@@ -391,17 +395,16 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
             lat.add((Double) singleUser.get("lat"));
             lon.add((Double)singleUser.get("lon"));
         }
-
-        System.out.println("data123"+user.toString()+lat.toString()+lon.toString());
+        System.out.println("userdata"+user.toString()+lat.toString()+lon.toString());
     }
 
+    //Get user's data from Firebase
     public void UserData(){
-
             myRef.addListenerForSingleValueEvent( new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     //Get map of users in datasnapshot
-                    collectPhoneNumbers((Map<String,Object>) dataSnapshot.getValue());
+                    GetUserData((Map<String,Object>) dataSnapshot.getValue());
                 }
 
                 @Override
@@ -409,33 +412,6 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
                     //handle databaseError
                 }
             });
-
-//        });
     }
-
-    private void turnGPSOn(){
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-
-        if(!provider.contains("gps")){ //if gps is disabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            sendBroadcast(poke);
-        }
-    }
-
-    private void turnGPSOff(){
-        String provider = Settings.Secure.getString(getContentResolver(), Settings.Secure.LOCATION_PROVIDERS_ALLOWED);
-
-        if(provider.contains("gps")){ //if gps is enabled
-            final Intent poke = new Intent();
-            poke.setClassName("com.android.settings", "com.android.settings.widget.SettingsAppWidgetProvider");
-            poke.addCategory(Intent.CATEGORY_ALTERNATIVE);
-            poke.setData(Uri.parse("3"));
-            sendBroadcast(poke);
-        }
-    }
-
 
 }

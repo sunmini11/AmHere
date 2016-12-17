@@ -3,6 +3,7 @@ package com.egco428.logintest;
 /**
  * Created by dell pc on 14/12/2559.
  */
+// Get data from Firebase
 public class DataFirebase {
     private String usernamefb;
     private double lat;

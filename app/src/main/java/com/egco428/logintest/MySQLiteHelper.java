@@ -27,7 +27,7 @@ public class MySQLiteHelper extends SQLiteOpenHelper {
     // Database creation sql statement
     private static final String CREATE_TABLE_LOGIN = "create table "
             + TABLE_LOGIN + "(" + COLUMN_ID
-            + " integer primary key autoincrement, " + COLUMN_USERNAME + " text not null, " + COLUMN_PASSWORD   + " text not null);";
+            + " integer primary key autoincrement, " + COLUMN_USERNAME + " text not null, " + COLUMN_PASSWORD + " text not null);";
 
     private static final String CREATE_TABLE_CONT = "create table "
             + TABLE_CONT + "(" + COLUMN_IDCONT

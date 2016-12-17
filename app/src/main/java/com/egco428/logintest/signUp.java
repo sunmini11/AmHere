@@ -26,39 +26,40 @@ public class signUp extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
 
+        //Actionbar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("Sign Up");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
-        username = (EditText)findViewById(R.id.usernameSignUp);
-        password = (EditText)findViewById(R.id.passwordSignUp);
-        summit = (Button)findViewById(R.id.summitBtn);
+        username = (EditText) findViewById(R.id.usernameSignUp);
+        password = (EditText) findViewById(R.id.passwordSignUp);
+        summit = (Button) findViewById(R.id.summitBtn);
 
         dataSource = new LoginDataSource(this);
         dataSource.open();
     }
 
-    public void pressSummit(View view){
+    //push submit button to signup
+    public void pressSummit(View view) {
 
         String Username = username.getText().toString();
         String Password = password.getText().toString();
 
         String loginMessage = dataSource.findUsername(Username);
 
-        if(Username.equals("")||Password.equals(""))
-        {
+        //if username or password is blank
+        if (Username.equals("") || Password.equals("")) {
             Toast.makeText(getApplicationContext(), "Please fill in all fields.",
-                    Toast.LENGTH_SHORT).show();
-        }
-        else {
+                    Toast.LENGTH_SHORT).show(); //show message
+        } else {
+            //if username is already taken
             if (loginMessage.equals(Username)) {
                 LoginMessage comment = dataSource.createLogin(Username, Password);
                 finish();
             } else {
                 Toast.makeText(getApplicationContext(), "Username is already taken",
-                        Toast.LENGTH_SHORT).show();
+                        Toast.LENGTH_SHORT).show(); //show message
             }
         }
 

@@ -38,34 +38,42 @@ public class AddFriend extends AppCompatActivity {
 
     protected List<ContMessage> values;
 
-    private ListView listView ;
+    private ListView listView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
 
+        name = (EditText) findViewById(R.id.name);
+        number = (EditText) findViewById(R.id.number);
+        add = (Button) findViewById(R.id.addBtn);
+
+        //Actionbar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("Add Friends");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
-        name = (EditText)findViewById(R.id.name);
-        number = (EditText)findViewById(R.id.number);
-        add = (Button)findViewById(R.id.addBtn);
-
+        //Receive Username from SMSMapsActivity
         User = getIntent().getStringExtra(SMSMapsActivity.User);
+
+        //SQLite Database
         dataSource = new ContDataSource(this);
         dataSource.open();
         values = dataSource.getAllComments(User);
-        loginArrayAdapter = new loginArrayAdapter(this,0,values);
-        listView = (ListView)findViewById(R.id.listView);
+
+        //Set Listview
+        loginArrayAdapter = new loginArrayAdapter(this, 0, values);
+        listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(loginArrayAdapter); //push data in adapter into listview
+
+        //Tab to delete from List and database
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, final View view, final int position, final long l) {
 
-                if(loginArrayAdapter.getCount()>0){
+                if (loginArrayAdapter.getCount() > 0) {
 
                     final ContMessage login = loginArrayAdapter.getItem(position);
                     dataSource.deleteComment(login); // delete in database
@@ -97,6 +105,7 @@ public class AddFriend extends AppCompatActivity {
     }
 
 
+    //put data to list
     class loginArrayAdapter extends ArrayAdapter<ContMessage> {
         Context context;
         List<ContMessage> objects;
@@ -124,28 +133,29 @@ public class AddFriend extends AppCompatActivity {
 
     }
 
-    public void add(View view){
+    //add friend's name and phone number to SQlite Database
+    public void add(View view) {
 
         ContMessage comment = null;
 
         String newName = name.getText().toString();
         String newNum = number.getText().toString();
 
-        comment = dataSource.createCont(User,newNum,newName);
+        comment = dataSource.createCont(User, newNum, newName);
         dataSource.open();
         values = dataSource.getAllComments(User);
-        loginArrayAdapter = new loginArrayAdapter(this,0,values);
+        loginArrayAdapter = new loginArrayAdapter(this, 0, values);
         listView.setAdapter(loginArrayAdapter);
     }
 
     @Override
-    protected void onResume(){
+    protected void onResume() {
         dataSource.open();
         super.onResume();
     }
 
     @Override
-    protected void onPause(){
+    protected void onPause() {
         dataSource.close();
         super.onPause();
     }

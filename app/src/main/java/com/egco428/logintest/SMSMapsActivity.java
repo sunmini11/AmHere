@@ -49,7 +49,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCallback,LocationListener {
+public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCallback, LocationListener {
 
     private GoogleMap mMap;
     public String Username;
@@ -82,27 +82,27 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
     ArrayList<Double> lon = new ArrayList<>();
 
     LocationManager mLocationManager;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_smsmaps);
         Username = getIntent().getStringExtra(MainActivity.User);
 
-
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
 
+        //ActionBar
         ActionBar mActionBar = getSupportActionBar();
         mActionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#f40d0d")));
         mActionBar.setTitle("Map");
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true); //set back button
 
+        //GPS
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-
         mprovider = locationManager.getBestProvider(criteria, true);
 
         if (mprovider != null && !mprovider.equals("")) {
@@ -111,16 +111,14 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             }
 
             Location location = locationManager.getLastKnownLocation(mprovider);
-            //locationManager.requestLocationUpdates(mprovider, 1000, 1, this);
-            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER,0,1,this);
-            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER,0,1,this);
-//            Lati = location.getLatitude();
-//            Long = location.getLongitude();
-            if (location != null && onmap){
-                onLocationChanged(location);}
-            else{
+            locationManager.requestLocationUpdates(locationManager.GPS_PROVIDER, 0, 1, this);
+            locationManager.requestLocationUpdates(locationManager.NETWORK_PROVIDER, 0, 1, this);
+
+            if (location != null && onmap) {
+                onLocationChanged(location);
+            } else {
             }
-                //Toast.makeText(getBaseContext(), "No Location Provider Found Check Your Code", Toast.LENGTH_SHORT).show();
+
             scheduleSendLocation();
         }
 
@@ -131,50 +129,55 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
 
     }
 
-
+    //Add latitude, longitude and username when location change
     @Override
     public void onLocationChanged(Location location) {
 
         mMap.clear();
 
-        Lati =  location.getLatitude();
+        //get current latitude and longitude
+        Lati = location.getLatitude();
         Long = location.getLongitude();
 
+        //set user's location on Map
         LatLng sydney = new LatLng(Lati, Long);
         mMap.addMarker(new MarkerOptions().position(sydney).title("You are here"));
         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        //mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,20));
 
         //get data
         double getLat = Lati;
         double getLon = Long;
+        //Add to Firebase
         DataFirebase dataFirebase = new DataFirebase(Username, getLat, getLon);
         myRef.child(Username).setValue(dataFirebase);
 
         onmap = true;
     }
 
-    public void markFriend(){
-        for(int i = 0;i<lat.size();i++)
-        {
+    /*
+   Add the other users's location on map and marker
+   Distance from user to them have to less than 0.5 miles
+   */
+    public void markFriend() {
+        for (int i = 0; i < lat.size(); i++) {
             String UN = user.get(i).toString();
-            if(UN.equals(Username)){
-            }
-            else{
+            if (UN.equals(Username)) {
+            } else {
                 double la = lat.get(i);
                 double lo = lon.get(i);
-                double dis = distance(Lati,Long,la,lo);
-                if(dis<0.5){
+                double dis = distance(Lati, Long, la, lo);
+                if (dis < 0.5) {
                     mMap.addMarker(new MarkerOptions()
                             .position(new LatLng(la, lo))
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                             .title(UN)
-                            .snippet(String.valueOf(la)+","+String.valueOf(lo)));
+                            .snippet(String.valueOf(la) + "," + String.valueOf(lo)));
                 }
             }
         }
     }
 
+    //Read data from Firebase every 1 second
     private double distance(double lat1, double lon1, double lat2, double lon2) {
         double theta = lon1 - lon2;
         double dist = Math.sin(deg2rad(lat1))
@@ -188,6 +191,7 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         return (dist);
     }
 
+    //Calculate distance between user and the others
     public void scheduleSendLocation() {
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
@@ -208,29 +212,30 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         return (rad * 180.0 / Math.PI);
     }
 
-    private void collectPhoneNumbers(Map<String,Object> users) {
+    //Get data in Firebase then add to list
+    private void collectLocation(Map<String, Object> users) {
 
         //iterate through each user, ignoring their UID
-        for (Map.Entry<String, Object> entry : users.entrySet()){
+        for (Map.Entry<String, Object> entry : users.entrySet()) {
 
             //Get user map
             Map singleUser = (Map) entry.getValue();
-            //Get phone field and append to list
+            //Get username,latitude,longitude field and append to list
             user.add((String) singleUser.get("usernameFb"));
             lat.add((Double) singleUser.get("lat"));
-            lon.add((Double)singleUser.get("lon"));
+            lon.add((Double) singleUser.get("lon"));
         }
 
-        System.out.println("data123"+user.toString()+lat.toString()+lon.toString());
+        System.out.println("data123" + user.toString() + lat.toString() + lon.toString());
     }
 
-    public void UserData(){
+    public void UserData() {
 
-        myRef.addListenerForSingleValueEvent( new ValueEventListener() {
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 //Get map of users in datasnapshot
-                collectPhoneNumbers((Map<String,Object>) dataSnapshot.getValue());
+                collectLocation((Map<String, Object>) dataSnapshot.getValue());
             }
 
             @Override
@@ -239,7 +244,6 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             }
         });
 
-//        });
     }
 
 
@@ -271,10 +275,9 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
         LatLng sydney = new LatLng(Lati, Long);
         mMap.addMarker(new MarkerOptions().position(sydney).title("You are here"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney,20));
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(sydney, 20));
         onmap = true;
 
     }
@@ -296,9 +299,9 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_add) {
             String UN = Username;
-            Intent intent = new Intent(this,AddFriend.class);
-            intent.putExtra(User,UN);
-            startActivityForResult(intent,DETAIL_REQ_CODE);
+            Intent intent = new Intent(this, AddFriend.class);
+            intent.putExtra(User, UN);
+            startActivityForResult(intent, DETAIL_REQ_CODE);
 
             //startActivity(new Intent(SMSMapsActivity.this, AddFriend.class));
             return true;
@@ -309,9 +312,10 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             finish();
         }
 
-      return super.onOptionsItemSelected(item);
+        return super.onOptionsItemSelected(item);
     }
 
+    //Send sms to friend that user add in database
     public void sendSMS(View view) {
         dataSource = new ContDataSource(this);
         dataSource.open();
@@ -319,14 +323,12 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         Cursor allNumber = dataSource.findnumber(Username);
         allNumber.moveToFirst();
 
-        int i = 0;
         while (!allNumber.isAfterLast()) {
             String phoneNo = allNumber.getString(2);
+            //message
             String msg = "I'm here" + " " + "Latituge: " + Lati + "  " + "Longitude: " + Long;
             try {
-                i=i+1;
-
-                System.out.println("count"+i);
+                //send sms
                 SmsManager smsManager = SmsManager.getDefault();
                 smsManager.sendTextMessage(phoneNo, null, msg, null, null);
                 Toast.makeText(getApplicationContext(), "Message Sent",
@@ -339,10 +341,10 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             allNumber.moveToNext();
         }
     }
-
+    //when press back on your device
     public void onDestroy() {
-        if(myRef.child(Username)!=null){
-            myRef.child(Username).removeValue();
+        if (myRef.child(Username) != null) {
+            myRef.child(Username).removeValue(); //remove data from Firebase
         }
         super.onDestroy();
     }

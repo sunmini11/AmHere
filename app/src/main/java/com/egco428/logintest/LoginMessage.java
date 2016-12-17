@@ -3,11 +3,12 @@ package com.egco428.logintest;
 /**
  * Created by pam on 12/12/2016.
  */
+
+//Get data from login table
 public class LoginMessage {
     private long id;
     private String username;
     private String password;
-
 
 
     public long getId() {
@@ -26,12 +27,13 @@ public class LoginMessage {
         this.username = username;
     }
 
-    public String getPassword(){ return password;}
+    public String getPassword() {
+        return password;
+    }
 
-    public void setPassword(String password){this.password = password;}
-
-
-
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 
     // Will be used by the ArrayAdapter in the ListView

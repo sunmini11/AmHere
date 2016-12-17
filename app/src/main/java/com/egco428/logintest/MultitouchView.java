@@ -13,24 +13,25 @@ import android.view.View;
 /**
  * Created by dell pc on 15/12/2559.
  */
-public class MultitouchView extends View {
-    public  static int pointerSize = 0;
 
+//detect and draw multi-touch on screen
+public class MultitouchView extends View {
+    public static int pointerSize = 0;
     private static final int SIZE = 60;
 
     private SparseArray<PointF> mActivePointers;
     private Paint mPaint;
-    private int[] colors = { Color.parseColor("#7986CB"), Color.parseColor("#64B5F6"), Color.parseColor("#4FC3F7"),
-             };
+    private int[] colors = {Color.parseColor("#7986CB"), Color.parseColor("#64B5F6"), Color.parseColor("#4FC3F7"),
+    };
 
     private Paint textPaint;
 
-    public MultitouchView(Context context, AttributeSet attrs){
-        super(context,attrs);
+    public MultitouchView(Context context, AttributeSet attrs) {
+        super(context, attrs);
         initView();
     }
 
-    private void initView(){
+    private void initView() {
         mActivePointers = new SparseArray<PointF>();
         mPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         mPaint.setColor(Color.BLUE);
@@ -40,32 +41,32 @@ public class MultitouchView extends View {
     }
 
     @Override
-    protected void onDraw(Canvas canvas){
+    protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
 
-        for (int size = mActivePointers.size(), i=0; i<size; i++){
+        for (int size = mActivePointers.size(), i = 0; i < size; i++) {
             PointF point = mActivePointers.valueAt(i);
-            if (point != null){
-                mPaint.setColor(colors[i%3]);
-                canvas.drawCircle(point.x,point.y,SIZE,mPaint);
+            if (point != null) {
+                mPaint.setColor(colors[i % 3]);
+                canvas.drawCircle(point.x, point.y, SIZE, mPaint);
             }
-            canvas.drawText("Total pointers: " + mActivePointers.size(),10,40,textPaint);
+            canvas.drawText("Total pointers: " + mActivePointers.size(), 10, 40, textPaint);
         }
     }
 
     @Override
-    public boolean onTouchEvent(MotionEvent event){
+    public boolean onTouchEvent(MotionEvent event) {
         int pointerIndex = event.getActionIndex();
         int pointerId = event.getPointerId(pointerIndex);
         int maskedAction = event.getActionMasked();
 
-        switch (maskedAction){
+        switch (maskedAction) {
             case MotionEvent.ACTION_DOWN:
             case MotionEvent.ACTION_POINTER_DOWN:
                 PointF f = new PointF();
                 f.x = event.getX(pointerIndex);
                 f.y = event.getY(pointerIndex);
-                mActivePointers.put(pointerId,f);
+                mActivePointers.put(pointerId, f);
                 break;
 
             case MotionEvent.ACTION_MOVE: {
@@ -74,7 +75,7 @@ public class MultitouchView extends View {
                     if (point != null) {
                         point.x = event.getX(i);
                         point.y = event.getY(i);
-                        if (mActivePointers.size()>=2){
+                        if (mActivePointers.size() >= 2) {
                             pointerSize = mActivePointers.size();
                         }
 
