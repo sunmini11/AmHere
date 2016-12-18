@@ -80,9 +80,9 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
     String getUsername;
     private final int Delay_SECONDS = 1000;
 
-    ArrayList<String> user = new ArrayList<>();
-    ArrayList<Double> lat = new ArrayList<>();
-    ArrayList<Double> lon = new ArrayList<>();
+    ArrayList<String> user ;//= new ArrayList<>();
+    ArrayList<Double> lat ;//= new ArrayList<>();
+    ArrayList<Double> lon ;//= new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -135,12 +135,14 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         shareLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                System.out.println("post");
                 handlePendingAction();
                 performPublish(PendingAction.POST_LOCATION);
             }
         });
-
-
+        user = new ArrayList<>();
+        lat = new ArrayList<>();
+        lon = new ArrayList<>();
     }
 
     //Add latitude, longitude and username when location change
@@ -148,7 +150,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
     public void onLocationChanged(Location location) {
 
         mMap.clear();
-
+        System.out.println("Map clear");
         //get current latitude and longitude
         Lati = location.getLatitude();
         Long = location.getLongitude();
@@ -156,7 +158,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         //set user's location on Map
         LatLng sydney = new LatLng(Lati, Long);
         mMap.addMarker(new MarkerOptions().position(sydney).title("You are here"));
-         mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
 
         //get data
         double getLat = Lati;
@@ -172,9 +174,11 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
     Distance from user to them have to less than 500 meters
     */
     public void markFriend() {
+        System.out.println("mark"+user.toString()+lat.toString()+lon.toString());
         for (int i = 0; i < lat.size(); i++) {
             String UN = user.get(i).toString();
             if (UN.equals(getUsername)) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(Lati, Long)).title("You are here"));
             } else {
                 double la = lat.get(i);
                 double lo = lon.get(i);
@@ -185,10 +189,13 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
                             .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_BLUE))
                             .title(UN)
                             .snippet(String.valueOf(la)+","+String.valueOf(lo)));
+                    System.out.println("userdata2 "+UN+la+lo);
                 }
             }
         }
+
     }
+
 
     //Read data from Firebase every 1 second
     public void scheduleSendLocation() {
@@ -198,6 +205,9 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
             public void run() {
                 UserData();
                 markFriend();
+                user = new ArrayList<>();
+                lat = new ArrayList<>();
+                lon = new ArrayList<>();
                 handler.postDelayed(this, Delay_SECONDS);
             }
         }, Delay_SECONDS);
@@ -274,6 +284,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
 
     //Post method to check login status
     private void performPublish(PendingAction action) {
+        System.out.println("performPublish");
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         if (accessToken != null) {
             pendingAction = action; //recognise the action
@@ -283,6 +294,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
 
     //post location link on Facebook
     private void handlePendingAction() {
+        System.out.println("postPending");
         PendingAction oldPendingAction = pendingAction;
         pendingAction = PendingAction.NONE;
 
@@ -359,6 +371,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
         if (myRef.child(getUsername) != null) {
             myRef.child(getUsername).removeValue(); //remove data from Firebase
             LoginManager.getInstance().logOut(); //log out from facebook
+
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
             }
@@ -404,6 +417,7 @@ public class FacebookMapsActivity extends AppCompatActivity implements OnMapRead
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     //Get map of users in datasnapshot
+
                     GetUserData((Map<String,Object>) dataSnapshot.getValue());
                 }
 

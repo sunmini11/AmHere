@@ -77,9 +77,9 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
     //For seeing friends
     private final int Delay_SECONDS = 1000;
 
-    ArrayList<String> user = new ArrayList<>();
-    ArrayList<Double> lat = new ArrayList<>();
-    ArrayList<Double> lon = new ArrayList<>();
+    ArrayList<String> user ;
+    ArrayList<Double> lat ;
+    ArrayList<Double> lon ;
 
     LocationManager mLocationManager;
 
@@ -122,6 +122,10 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             scheduleSendLocation();
         }
 
+        user = new ArrayList<>();
+        lat = new ArrayList<>();
+        lon = new ArrayList<>();
+
         //Firebase
         datalist = new ArrayList();
         database = FirebaseDatabase.getInstance();
@@ -162,6 +166,7 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
         for (int i = 0; i < lat.size(); i++) {
             String UN = user.get(i).toString();
             if (UN.equals(Username)) {
+                mMap.addMarker(new MarkerOptions().position(new LatLng(Lati, Long)).title("You are here"));
             } else {
                 double la = lat.get(i);
                 double lo = lon.get(i);
@@ -199,6 +204,9 @@ public class SMSMapsActivity extends AppCompatActivity implements OnMapReadyCall
             public void run() {
                 UserData();
                 markFriend();// this method will contain your almost-finished HTTP calls
+                user = new ArrayList<>();
+                lat = new ArrayList<>();
+                lon = new ArrayList<>();
                 handler.postDelayed(this, Delay_SECONDS);
             }
         }, Delay_SECONDS);
