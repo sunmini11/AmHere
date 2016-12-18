@@ -14,9 +14,18 @@
         android:layout_height="40dp"
         android:text="USERNAME"
         android:id="@+id/textView5"
-        android:gravity="center"
-        android:layout_above="@+id/usernameSignUp"
-        android:layout_alignParentStart="true" />
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="30dp"
+        android:gravity="center_vertical" />
+
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_username_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/imageView3"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="70dp">
 
     <EditText
         android:layout_width="match_parent"
@@ -25,17 +34,22 @@
         android:background="@drawable/border"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true" />
-
+    </android.support.design.widget.TextInputLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="40dp"
         android:text="PASSWORD"
         android:id="@+id/textView6"
-        android:gravity="center"
-        android:layout_below="@+id/usernameSignUp"
+        android:layout_below="@+id/text_username_layout"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="20dp" />
-
+        android:layout_marginTop="20dp"
+        android:gravity="center_vertical" />
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/text_password_layout"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_below="@+id/textView6"
+        android:layout_alignParentStart="true">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -43,7 +57,7 @@
         android:background="@drawable/border"
         android:layout_below="@+id/textView6"
         android:layout_alignParentStart="true" />
-
+    </android.support.design.widget.TextInputLayout>
     <Button
         android:layout_width="200dp"
         android:layout_height="wrap_content"
@@ -53,16 +67,16 @@
         android:background="#fb7878"
         android:textColor="#ffffff"
         android:textSize="20dp"
-        android:layout_marginTop="61dp"
-        android:layout_below="@+id/passwordSignUp"
+        android:layout_marginTop="51dp"
+        android:layout_below="@+id/text_password_layout"
         android:layout_centerHorizontal="true" />
 
     <ImageView
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:id="@+id/imageView3"
+        android:src="@drawable/map"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="45dp"
-        android:src="@drawable/map" />
+        android:layout_marginTop="20dp" />
 </RelativeLayout>
