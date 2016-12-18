@@ -25,7 +25,8 @@
         android:layout_height="50dp"
         android:layout_below="@+id/imageView3"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="70dp">
+        android:layout_marginTop="70dp"
+        android:foregroundGravity="center_vertical">
 
     <EditText
         android:layout_width="match_parent"
@@ -33,7 +34,10 @@
         android:id="@+id/usernameSignUp"
         android:background="@drawable/border"
         android:layout_centerVertical="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:foregroundGravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:gravity="center_vertical" />
     </android.support.design.widget.TextInputLayout>
     <TextView
         android:layout_width="match_parent"
@@ -49,14 +53,18 @@
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:layout_below="@+id/textView6"
-        android:layout_alignParentStart="true">
+        android:layout_alignParentStart="true"
+        android:foregroundGravity="center_vertical">
     <EditText
         android:layout_width="match_parent"
         android:layout_height="50dp"
         android:id="@+id/passwordSignUp"
         android:background="@drawable/border"
         android:layout_below="@+id/textView6"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:foregroundGravity="center_vertical"
+        android:paddingLeft="5dp"
+        android:gravity="center_vertical" />
     </android.support.design.widget.TextInputLayout>
     <Button
         android:layout_width="200dp"

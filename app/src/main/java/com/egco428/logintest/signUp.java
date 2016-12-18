@@ -3,6 +3,7 @@ package com.egco428.logintest;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -35,6 +36,13 @@ public class signUp extends AppCompatActivity {
         username = (EditText) findViewById(R.id.usernameSignUp);
         password = (EditText) findViewById(R.id.passwordSignUp);
         summit = (Button) findViewById(R.id.summitBtn);
+
+        TextInputLayout userlay = (TextInputLayout) findViewById(R.id.text_username_layout);
+        TextInputLayout passlay = (TextInputLayout) findViewById(R.id.text_password_layout);
+        userlay.setEnabled(true);
+        username.setError("You need to enter a username");
+        passlay.setEnabled(true);
+        password.setError("You need to enter a password");
 
         dataSource = new LoginDataSource(this);
         dataSource.open();
